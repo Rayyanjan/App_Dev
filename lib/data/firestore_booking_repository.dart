@@ -19,7 +19,6 @@ class FirestoreBookingRepository implements BookingRepository {
     );
   }
 
- 
   @override
   Future<void> book({required String roomId, required DateTime slotStart,
       required String userId, required String userName}) async {
@@ -31,8 +30,9 @@ class FirestoreBookingRepository implements BookingRepository {
     final userRef = _users.doc(userId);
     final newRef = _bookings.doc();
 
+    try {
     await _db.runTransaction((tx) async {
-      
+     
       final lock = await tx.get(lockRef);
       if (lock.exists) throw SlotTakenException();
 
@@ -62,6 +62,21 @@ class FirestoreBookingRepository implements BookingRepository {
       tx.set(lockRef, {'bookingId': newRef.id, 'userId': userId});
       tx.set(userRef, {'activeBookingIds': [...live, newRef.id]}, SetOptions(merge: true));
     });
+    } catch (e) {
+      throw _translate(e);
+    }
+  }
+
+ 
+  Object _translate(Object e) {
+    if (e is SlotTakenException || e is BookingLimitException || e is SlotInPastException) {
+      return e;
+    }
+    final s = e.toString();
+    if (s.contains('Someone just booked this')) return SlotTakenException();
+    if (s.contains('You already have 2 active bookings')) return BookingLimitException();
+    if (s.contains('already ended')) return SlotInPastException();
+    return e;
   }
 
   @override
@@ -77,7 +92,7 @@ class FirestoreBookingRepository implements BookingRepository {
   Stream<List<Booking>> watchRoomDay(String roomId, DateTime day) {
     final start = DateTime(day.year, day.month, day.day);
     final end = start.add(const Duration(days: 1));
-   
+    
     return _bookings
         .where('roomId', isEqualTo: roomId)
         .where('status', isEqualTo: 'active')

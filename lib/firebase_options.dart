@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -36,10 +33,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -57,6 +51,24 @@ class DefaultFirebaseOptions {
     appId: '1:775992725007:android:f7d632c1e988d77c425d7a',
     messagingSenderId: '775992725007',
     projectId: 'iba-roombook-98bf4',
+    storageBucket: 'iba-roombook-98bf4.firebasestorage.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDMxmX-l_ycO1zEGLk3s2F7ULSYdSj8Q30',
+    appId: '1:775992725007:web:b74b068cf8a3626c425d7a',
+    messagingSenderId: '775992725007',
+    projectId: 'iba-roombook-98bf4',
+    authDomain: 'iba-roombook-98bf4.firebaseapp.com',
+    storageBucket: 'iba-roombook-98bf4.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDMxmX-l_ycO1zEGLk3s2F7ULSYdSj8Q30',
+    appId: '1:775992725007:web:2aedeb18bc47d215425d7a',
+    messagingSenderId: '775992725007',
+    projectId: 'iba-roombook-98bf4',
+    authDomain: 'iba-roombook-98bf4.firebaseapp.com',
     storageBucket: 'iba-roombook-98bf4.firebasestorage.app',
   );
 }
