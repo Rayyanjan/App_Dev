@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /rooms/{roomId} {
+      allow read: if signedIn();
+      allow write: if false;              
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      // sign-up: you may only create your own doc, and only as a student
+      allow create: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'student';
+      // self-promotion trap: you may edit your own doc but role must not change
+      allow update: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == 'active';
+      // owner: may only flip status -> cancelled, and only before start time
+      allow update: if isAdmin()
+                    || (signedIn()
+                        && resource.data.userId == request.auth.uid
+                        && request.resource.data.diff(resource.data)
+                             .affectedKeys().hasOnly(['status', 'cancelledAt'])
+                        && request.resource.data.status == 'cancelled'
+                        && request.time < resource.data.slotStart);
+      allow delete: if false;              // audit trail: never delete
+    }
+
+    // One lock doc per (roomId, slotStart); its existence == "slot taken".
+    match /slotLocks/{lockId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin()
+                    || (signedIn() && resource.data.userId == request.auth.uid);
+    }
+  }
+}
