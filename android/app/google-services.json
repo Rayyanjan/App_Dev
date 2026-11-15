@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "775992725007",
+    "project_id": "iba-roombook-98bf4",
+    "storage_bucket": "iba-roombook-98bf4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775992725007:android:f7d632c1e988d77c425d7a",
+        "android_client_info": {
+          "package_name": "com.example.roombook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJHLDS57fIdtTxAn64C-tJtS7Ea0loZ1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
