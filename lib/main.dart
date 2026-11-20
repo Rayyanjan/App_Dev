@@ -128,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   itemCount: state.visibleProducts.length,
                   itemBuilder: (context, i) =>
-                      _ProductCard(product: state.visibleProducts[i]),
+                      ProductCard(product: state.visibleProducts[i]),
                 );
               },
             ),
@@ -139,9 +139,9 @@ class HomeScreen extends StatelessWidget {
   }
 }
  
-class _ProductCard extends StatelessWidget {
+class ProductCard extends StatelessWidget {
   final Product product;
-  const _ProductCard({required this.product});
+  const ProductCard({required this.product});
  
   @override
   Widget build(BuildContext context) {
